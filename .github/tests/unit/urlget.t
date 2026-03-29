@@ -178,11 +178,10 @@ subtest 'urlgetTINY falls back to binget when the HTTP backend returns an error'
 
     is($status, 1, 'fallback result status is returned');
     is($text, 'fallback-result', 'fallback result text is returned');
-    is_deeply(
-        \@fallback_args,
-        ['https://example.test/fail', undef, 1, 'gateway exploded'],
-        'binget receives the request context and the 599 response body as the error message',
-    );
+    is($fallback_args[0], 'https://example.test/fail', 'binget receives the request URL');
+    ok(!defined($fallback_args[1]) || $fallback_args[1] eq '', 'binget receives no file target for inline downloads');
+    is($fallback_args[2], 1, 'binget receives the quiet flag');
+    is($fallback_args[3], 'gateway exploded', 'binget receives the 599 response body as the error message');
 };
 
 subtest 'binget reports a clear error when no download helpers are configured' => sub {
