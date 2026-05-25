@@ -16,11 +16,12 @@ use TestBootstrap ();
 # NOTE: ServerCheck.pm intentionally has a small unit-test surface here.
 # Almost every public sub (report, firewallcheck, servicescheck, mailcheck,
 # apachecheck, phpcheck, whmcheck, sshtelnetcheck, dacheck) opens hardcoded
-# paths under /etc/csf, /proc, /usr/local/cpanel etc., shells out to iptables/
-# systemctl/chkconfig, and writes results to a file-scope $output lexical.
-# Without refactor-time seams these cannot be driven from a unit test on this
-# machine. Phase B should extract the parsing helpers (firewall config line
-# parser, services list filter, /proc/net port scan) into pure modules.
+# paths under /etc/csf, /proc, and various control-panel install prefixes,
+# shells out to iptables/systemctl/chkconfig, and writes results to a
+# file-scope $output lexical. Without refactor-time seams these cannot be
+# driven from a unit test on this machine. Phase B should extract the
+# parsing helpers (firewall config line parser, services list filter,
+# /proc/net port scan) into pure modules.
 BEGIN {
     TestBootstrap::reload_module_with_config(
         'ConfigServer::ServerCheck',
