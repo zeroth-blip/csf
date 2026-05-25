@@ -7,6 +7,17 @@ use FindBin qw($Bin);
 use Test::More;
 use lib "$Bin/../lib";
 
+BEGIN {
+    # Stub LWP::UserAgent so CloudFlare.pm can be loaded on hosts (incl. CI
+    # runners) without libwww-perl installed. Each subtest still injects its
+    # own behaviour via `local *LWP::UserAgent::method = sub { ... }`.
+    $INC{'LWP/UserAgent.pm'} = __FILE__;
+    no strict 'refs';
+    *{'LWP::UserAgent::new'}    = sub { my $c = shift; bless {}, $c };
+    *{'LWP::UserAgent::post'}   = sub { die 'LWP::UserAgent::post must be stubbed by the active subtest' };
+    *{'LWP::UserAgent::delete'} = sub { die 'LWP::UserAgent::delete must be stubbed by the active subtest' };
+}
+
 use TestBootstrap ();
 
 {
