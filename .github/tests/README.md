@@ -131,6 +131,22 @@ In practice that means:
 - do not depend on control-panel-specific test utilities
 - do not introduce external branding or references into the local test system
 
+## Messenger Apache integration test
+
+Run this test only in a disposable Docker container. It writes real CSF/Apache
+paths inside that container and never installs CSF or changes the host firewall:
+
+```bash
+docker build -f .github/tests/integration/Dockerfile.messenger-apache -t csf-messenger-test .
+docker run --rm --network none -v "$PWD:/repo:ro" csf-messenger-test bash /repo/.github/tests/integration/messenger-apache.sh
+```
+
+The test uses a harmless CGI response as a vulnerable positive control, then
+exercises the real Messenger v3 generator and Apache/PHP over TLS. It verifies
+fresh and retained v15.03 templates, two TLS virtual hosts, custom settings,
+unchanged installed template bytes, and repeated regeneration. It does not
+exercise real firewall redirection or Google's reCAPTCHA service.
+
 ## Future growth
 
 As coverage expands, this structure can grow without changing the basic workflow model. Likely next steps are:
